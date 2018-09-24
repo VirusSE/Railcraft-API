@@ -12,15 +12,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * Indicates a battery carried by a cart.
+ * Created by CovertJaguar on 10/4/2016 for Railcraft.
  *
- * <p>This cart battery is not related to the charge system of a world.</p>
+ * @author CovertJaguar <http://www.railcraft.info>
  */
 public interface ICartBattery extends IChargeBattery {
-    /**
-     * The type of the cart battery.
-     */
     enum Type {
+
         /**
          * Users draw power from tracks, sources, and storage.
          */
@@ -42,55 +40,29 @@ public interface ICartBattery extends IChargeBattery {
         STORAGE
     }
 
-    /**
-     * Returns the type of the battery.
-     */
     Type getType();
 
-    /**
-     * Returns the per-tick loss of charge in the cart battery.
-     */
+    void setCharge(double charge);
+
+    void addCharge(double charge);
+
+    double removeCharge(double request);
+
     double getLosses();
 
-    /**
-     * Returns the approximated average charge used in the last 25 ticks.
-     */
     double getDraw();
 
-    /**
-     * Update the battery and tries to draw charge from other carts.
-     *
-     * @param owner The cart that carries the battery
-     */
     void tick(EntityMinecart owner);
 
-    /**
-     * Update the battery and tries to draw charge from the track.
-     *
-     * @param owner The cart that carries the battery
-     * @param pos The position of the track
-     */
     void tickOnTrack(EntityMinecart owner, BlockPos pos);
 
-    /**
-     * Reads the charge information from the minecart.
-     *
-     * @param compound The tag that stores the information
-     * @return The tag provided
-     */
-    default NBTTagCompound readFromNBT(NBTTagCompound compound) {
-        setCharge(compound.getDouble("charge"));
+    static NBTTagCompound readFromNBT(ICartBattery battery, NBTTagCompound compound) {
+        battery.setCharge(compound.getDouble("charge"));
         return compound;
     }
 
-    /**
-     * Saves the charge information to the minecart.
-     *
-     * @param compound The tag that saves the information
-     * @return The tag provided
-     */
-    default NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setDouble("charge", getCharge());
+    static NBTTagCompound writeToNBT(ICartBattery battery, NBTTagCompound compound) {
+        compound.setDouble("charge", battery.getCharge());
         return compound;
     }
 }
